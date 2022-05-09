@@ -31,7 +31,7 @@ COPY Gemfile* ./
 # apk ... Alpine Linuxのコマンド
 # apk update = パッケージの最新リストを取得
 RUN apk update && \
-  gem install bundler --no-document bundler:2.2.17 && \
+  # gem install bundler --no-document bundler:2.2.17 && \
   # apk upgrade = インストールパッケージを最新のものに
   apk upgrade && \
   # apk add = パッケージのインストールを実行
