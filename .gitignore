@@ -1,3 +1,4 @@
 .env
 /.DS_store
 tutorial/.ash_history
+tutorial/.irb_history

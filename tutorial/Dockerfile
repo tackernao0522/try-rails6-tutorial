@@ -13,8 +13,8 @@ ARG DEV_PACKAGES="build-base curl-dev"
 # 環境変数を定義(Dockerfile, コンテナ参照可能)
 # Rails ENV["TZ"] => Asia/Tokyoが出力される
 ENV HOME=/${WORKDIR} \
-  LANG=C.UTF-8 \
-  TZ=Asia/Tokyo
+    LANG=C.UTF-8 \
+    TZ=Asia/Tokyo
 
 # Dockerfime内で指定した命令を実行する・・・RUN, COPY, ADD, ENTORYPOINT, CMD
 # 作業ディレクトリを定義
@@ -27,8 +27,6 @@ WORKDIR ${HOME}
 # コピー元(ホスト) ... Dockerfileがあるディレクトリ以下を指定(api) ../ NG
 # コピー先(コンテナ) ... 絶対パス or 相対パス(./ ... 今いる(カレント)ディレクトリ)
 COPY Gemfile* ./
-
-# ENV BUNDLER_VERSION 2.2.17
 
 # apk ... Alpine Linuxのコマンド
 # apk update = パッケージの最新リストを取得
@@ -49,8 +47,6 @@ RUN apk update && \
 
 # . ... Dockerfileがあるディレクトリ全てのファイル(サブディレクトリも含む)
 COPY . ./
-
-# 削除
 
 # ホスト(PC)       | コンテナ
 # ブラウザ(外部)    | Rails
