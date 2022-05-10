@@ -103,3 +103,96 @@ run:
   # Bundlerでインストールされたgemを使用してコマンドを実行
   web: bundle exec puma -C config/puma.rb
 ```
+
+# 第2章 Toyアプリケーション
+
++ `root $ docker compose run --rm tutorial rails g scaffold User name:string email:string`を実行<br>
+
++ `root $ docker compose run --rm tutorial rails db:migrate`を実行<br>
+
++ `http://localhost:3000/users`にアクセスしてみる<br>
+
++ `config/routes.rb`を編集<br>
+
+```rb:routes.rb
+Rails.application.routes.draw do
+  resources :users
+  root 'users#index'
+end
+```
+
+## 2.3 Micropostsリソース
+
++ `root rails g scaffold Micropost content:text user_id:integer`を実行<br>
+
++ `root rails db:migrate`を実行<br>
+
+## 2.14 マイクロポストの最大文字数を140文字に制限する
+
++ `app/models/micropost.rb`を編集<br>
+
+```rb:micropost.rb
+class Micropost < ApplicationRecord
+  validates :content, length: { maximum: 140 }
+end
+```
+
+## 2.3.3 ユーザーはたくさん マイクロポストを持っている
+
++ `app/models/user.rb`(1人のユーザーに複数のマイクロポストがある)を編集<br>
+
+```rb:user.rb
+class User < ApplicationRecord
+  has_many :microposts
+end
+```
+
++ `app/models/micropost.rb`(1つのマイクロポストは1人のユーザーのみに属する)を編集<br>
+
+```rb:micropost.rb
+class Micropost < ApplicationRecord
+  belongs_to :user
+  validates :content, length: { maximum: 140 }
+end
+```
+
++ Railsコンソールでアプリケーションの状態を調べてみる<br>
+
++ `$ rails console`を実行<br>
+
++ `>> first_user = User.first`を実行<br>
+
+```
+  User Load (6.2ms)  SELECT "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT $1  [["LIMIT", 1]]
+=> #<User id: 1, name: "user1", email: "user1@example.com", created_at: "2022-05-10 03:20:12.805596000 +0000", updated_at: "2022-05-10 03:20:12.805596000 +0000">
+```
+
++ `>> first_user.microposts`を実行<br>
+
+```
+  Micropost Load (8.3ms)  SELECT "microposts".* FROM "microposts" WHERE "microposts"."user_id" = $1 /* loading for inspect */ LIMIT $2  [["user_id", 1], ["LIMIT", 11]]
+=> #<ActiveRecord::Associations::CollectionProxy [#<Micropost id: 1, content: "micropost1", user_id: 1, created_at: "2022-05-10 03:20:56.413554000 +0000", updated_at: "2022-05-10 03:20:56.413554000 +0000">, #<Micropost id: 2, content: "micropost1-1", user_id: 1, created_at: "2022-05-10 03:21:17.271998000 +0000", updated_at: "2022-05-10 03:21:17.271998000 +0000">]>
+```
+
++ `>> micropost = first_user.microposts.first`を実行<br>
+
+```
+  Micropost Load (1.7ms)  SELECT "microposts".* FROM "microposts" WHERE "microposts"."user_id" = $1 ORDER BY "microposts"."id" ASC LIMIT $2  [["user_id", 1], ["LIMIT", 1]]
+=> #<Micropost id: 1, content: "micropost1", user_id: 1, created_at: "2022-05-10 03:20:56.413554000 +0000", updated_at: "2022-05-10 03:20:56.413554000 +0000">
+```
+
++ `>> micropost.user`を実行<br>
+
+```
+=> #<User id: 1, name: "user1", email: "user1@example.com", created_at: "2022-05-10 03:20:12.805596000 +0000", updated_at: "2022-05-10 03:20:12.805596000 +0000">
+```
+## 2.18 マイクロポストのコンテンツが存在しているかどうかの確認
+
++ `app/models/micropost.rb`を編集<br>
+
+```rb:micropost.rb
+class Micropost < ApplicationRecord
+  belongs_to :user
+  validates :content, length: { maximum: 140 }, presence: true
+end
+```
