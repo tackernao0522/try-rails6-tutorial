@@ -196,3 +196,5 @@ class Micropost < ApplicationRecord
   validates :content, length: { maximum: 140 }, presence: true
 end
 ```
+
++ `rails db:reset`ができない時の対処法` https://qiita.com/Kiyo_Karl2/items/f1732fb7348b2ed9471d <br>

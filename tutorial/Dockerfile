@@ -1,6 +1,6 @@
 # ベースイメージを指定する
 # FROM ベースイメージ:タグ(タグはなくてもよいが最新のものが指定されることになる)
-FROM ruby:2.7.2-alpine
+FROM ruby:2.5.0-alpine
 
 # Dockerfile内で使用する変数を定義
 # appという値が入る
@@ -31,7 +31,7 @@ COPY Gemfile* ./
 # apk ... Alpine Linuxのコマンド
 # apk update = パッケージの最新リストを取得
 RUN apk update && \
-  gem install bundler --no-document bundler:2.2.17 && \
+  # gem install bundler --no-document bundler:2.2.17 && \
   # apk upgrade = インストールパッケージを最新のものに
   apk upgrade && \
   # apk add = パッケージのインストールを実行
